@@ -52,6 +52,8 @@ func (s *APIServier) Run() {
 	pmRouter.HandleFunc("/{userId}", s.ProjectMemberHandler.DeleteMemberToProject).Methods("DELETE")
 
 	log.Println("listen and serve : ", s.Address)
-	http.ListenAndServe(s.Address, r)
+	if err := http.ListenAndServe(s.Address, r); err != nil {
+		log.Fatal(err.Error())
+	}
 
 }

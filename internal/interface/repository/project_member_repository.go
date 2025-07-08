@@ -6,5 +6,5 @@ type ProjectMemberRepostiroy interface {
 	GetByProjectId(int) (*[]entity.ProjectMember, error)
 	Create(*entity.ProjectMember) error
 	ChangeRole(string, int) error
-	Delete(int) error
+	Delete(userId, projectId int) error
 }

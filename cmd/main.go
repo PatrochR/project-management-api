@@ -39,7 +39,7 @@ func main() {
 	authHandler := controller.NewAuthController(authUsecase)
 	projectMemberHandler := controller.NewProjectMemberController(projectMemberUsecase)
 
-	router := router.NewAPIServier(":8080", *authHandler, *projectHandler, *projectMemberHandler)
+	router := router.NewAPIServier(":8888", *authHandler, *projectHandler, *projectMemberHandler)
 
 	router.Run()
 }

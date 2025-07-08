@@ -44,13 +44,11 @@ func (pmu *ProjectMemberUseCase) AddMemberToProject(role string, ownerId, userId
 	return err
 }
 
-//FIXME: IS IT OWNER ??????????
-
 func (pmu *ProjectMemberUseCase) DeleteMemberFromProject(ownerId, userId, projectId int) error {
 	err := pmu.projectRepo.IsItOwner(ownerId, projectId)
 	if err != nil {
 		return helper.ErrNoAccess
 	}
-	err = pmu.repo.Delete(userId)
+	err = pmu.repo.Delete(userId, projectId)
 	return err
 }

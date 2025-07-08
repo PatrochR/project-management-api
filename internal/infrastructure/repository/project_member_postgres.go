@@ -71,10 +71,10 @@ func (r *PostgresProjectMemberRepo) ChangeRole(role string, id int) error {
 	return err
 }
 
-func (r *PostgresProjectMemberRepo) Delete(userId int) error {
+func (r *PostgresProjectMemberRepo) Delete(userId, projectId int) error {
 	query := `
-		delete from project_members where User_Id = $1
+		delete from project_members where User_Id = $1 and Project_Id = $2
 	`
-	_, err := r.db.Exec(query, userId)
+	_, err := r.db.Exec(query, userId, projectId)
 	return err
 }
