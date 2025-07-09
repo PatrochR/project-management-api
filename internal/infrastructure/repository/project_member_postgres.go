@@ -35,6 +35,19 @@ func (pm *PostgresProjectMemberRepo) createProjectMemberTable() error {
 	_, err := pm.db.Exec(query)
 	return err
 }
+
+func (pm *PostgresProjectMemberRepo) CanUseProject(projectId, userId int) error {
+	query := `
+		select Id from project_members where Project_Id = $1 and User_Id = $2
+	`
+	row := pm.db.QueryRow(query, projectId, userId)
+	var id int
+	if err := row.Scan(&id); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pm *PostgresProjectMemberRepo) GetByProjectId(projectId int) (*[]entity.ProjectMember, error) {
 	query := `
 		select * from project_members where Project_Id = $1
