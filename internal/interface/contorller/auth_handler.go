@@ -5,31 +5,38 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/patorochr/project-management-api/internal/interface/helper"
 	"github.com/patorochr/project-management-api/internal/usercase"
 )
 
 type AuthController struct {
-	usecase *usercase.AuthUseCase
+	usecase   *usercase.AuthUseCase
+	validator *validator.Validate
 }
 
-func NewAuthController(usecase *usercase.AuthUseCase) *AuthController {
+func NewAuthController(usecase *usercase.AuthUseCase, validator *validator.Validate) *AuthController {
 	return &AuthController{
-		usecase: usecase,
+		usecase:   usecase,
+		validator: validator,
 	}
 }
 
 func (c *AuthController) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	var request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+	var input struct {
+		Email    string `json:"email" vaildate:"email , required"`
+		Password string `json:"password" vaildate:"min=6 , required"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	if err := c.validator.Struct(input); err != nil {
+		http.Error(w, "validation error", http.StatusBadRequest)
+		return
+	}
 
-	user, err := c.usecase.Register(request.Email, request.Password)
+	user, err := c.usecase.Register(input.Email, input.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -41,16 +48,20 @@ func (c *AuthController) RegisterHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (c *AuthController) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	var request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+	var input struct {
+		Email    string `json:"email" vaildate:"email , required"`
+		Password string `json:"password" vaildate:"min=6 , required"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	if err := c.validator.Struct(input); err != nil {
+		http.Error(w, "validation error", http.StatusBadRequest)
+		return
+	}
 
-	token, err := c.usecase.Login(request.Email, request.Password)
+	token, err := c.usecase.Login(input.Email, input.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

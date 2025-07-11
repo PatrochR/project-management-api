@@ -44,7 +44,7 @@ func main() {
 	taskUsecase := usercase.NewTaskUseCase(taskPostgres, projectMemberPostgres)
 
 	projectHandler := controller.NewProjectContoller(projectUsecase)
-	authHandler := controller.NewAuthController(authUsecase)
+	authHandler := controller.NewAuthController(authUsecase, validator)
 	projectMemberHandler := controller.NewProjectMemberController(projectMemberUsecase)
 	taskHandler := controller.NewTaskController(taskUsecase, validator)
 
