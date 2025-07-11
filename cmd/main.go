@@ -43,9 +43,9 @@ func main() {
 	projectMemberUsecase := usercase.NewProjectMemberUseCase(projectMemberPostgres, projectPostgres)
 	taskUsecase := usercase.NewTaskUseCase(taskPostgres, projectMemberPostgres)
 
-	projectHandler := controller.NewProjectContoller(projectUsecase)
+	projectHandler := controller.NewProjectContoller(projectUsecase, validator)
 	authHandler := controller.NewAuthController(authUsecase, validator)
-	projectMemberHandler := controller.NewProjectMemberController(projectMemberUsecase)
+	projectMemberHandler := controller.NewProjectMemberController(projectMemberUsecase, validator)
 	taskHandler := controller.NewTaskController(taskUsecase, validator)
 
 	router := router.NewAPIServier(":8888", authHandler, projectHandler, projectMemberHandler, taskHandler)

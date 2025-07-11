@@ -6,18 +6,21 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/patorochr/project-management-api/internal/interface/helper"
 	"github.com/patorochr/project-management-api/internal/usercase"
 )
 
 type ProjectMemberController struct {
-	uc *usercase.ProjectMemberUseCase
+	uc        *usercase.ProjectMemberUseCase
+	validator *validator.Validate
 }
 
-func NewProjectMemberController(uc *usercase.ProjectMemberUseCase) *ProjectMemberController {
+func NewProjectMemberController(uc *usercase.ProjectMemberUseCase, validator *validator.Validate) *ProjectMemberController {
 	return &ProjectMemberController{
-		uc: uc,
+		uc:        uc,
+		validator: validator,
 	}
 }
 
@@ -50,12 +53,16 @@ func (c *ProjectMemberController) AddMemberToProject(w http.ResponseWriter, r *h
 		return
 	}
 	var input struct {
-		Role   string `json:"role"`
-		UserId int    `json:"user_id"`
+		Role   string `json:"role" validate:"oneof=owner member"`
+		UserId int    `json:"user_id" validate:"required"`
 	}
 	err = json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if err := c.validator.Struct(input); err != nil {
+		http.Error(w, "validation error", http.StatusBadRequest)
 		return
 	}
 	err = c.uc.AddMemberToProject(input.Role, int(owenrId), input.UserId, projectId)
