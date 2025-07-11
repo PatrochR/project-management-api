@@ -49,8 +49,7 @@ func (r *PostgresTaskRepo) GetTaskById(taskId int) (*entity.Task, error) {
 
 func (r *PostgresTaskRepo) Create(task *entity.Task) error {
 	query := `
-		insert into task (Title , Description , Status , Project_Id , Owner_Id , Assignee_Id , Deadline , Created_At)
-		valuse ($1,$2,$3,$4,$5,$6,$7,$8)
+		insert into task (Title , Description , Status , Project_Id , Owner_Id , Assignee_Id , Deadline , Created_At) VALUES($1,$2,$3,$4,$5,$6,$7,$8)
 	`
 	_, err := r.db.Exec(query, task.Title, task.Description, task.Status, task.ProjectId, task.OwnerId, task.AssigneeId, task.Deadline, task.CreatedAt)
 	return err
@@ -103,7 +102,7 @@ func (r *PostgresTaskRepo) createTable() error {
 			Owner_Id integer not null references users(Id),
 			Assignee_Id integer not null references users(Id),
 			Deadline timestamp,
-			Created_At timestamp,
+			Created_At timestamp
 		) 
 	`
 	_, err := r.db.Exec(query)

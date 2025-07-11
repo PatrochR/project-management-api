@@ -10,12 +10,14 @@ import (
 )
 
 type ProjectUseCase struct {
-	repo repository.ProjectRepository
+	repo   repository.ProjectRepository
+	pmRepo repository.ProjectMemberRepostiroy
 }
 
-func NewProjectUseCase(repo repository.ProjectRepository) *ProjectUseCase {
+func NewProjectUseCase(repo repository.ProjectRepository, pmRepo repository.ProjectMemberRepostiroy) *ProjectUseCase {
 	return &ProjectUseCase{
-		repo: repo,
+		repo:   repo,
+		pmRepo: pmRepo,
 	}
 }
 
@@ -42,7 +44,17 @@ func (uc *ProjectUseCase) Create(name, description string, ownerId int) error {
 		Owner:       ownerId,
 		CreatedAt:   time.Now().UTC(),
 	}
-	return uc.repo.Create(&project)
+	id, err := uc.repo.Create(&project)
+	if err != nil {
+		return err
+	}
+	pm := entity.ProjectMember{
+		UserId:    ownerId,
+		Role:      "owner",
+		CreatedAt: time.Now().UTC(),
+		ProjectId: *id,
+	}
+	return uc.pmRepo.Create(&pm)
 }
 
 func (uc *ProjectUseCase) Update(name, description string, ownerId, id int) error {

@@ -53,12 +53,17 @@ func (r *PostgresProjectRepo) GetById(Id int) (*entity.Project, error) {
 	return &project, nil
 }
 
-func (r *PostgresProjectRepo) Create(project *entity.Project) error {
+func (r *PostgresProjectRepo) Create(project *entity.Project) (*int, error) {
 	query := `
-		insert into projects (Name , Description , Owner , CreatedAt) values ($1,$2,$3,$4)	
+		INSERT INTO projects (Name , Description , Owner , CreatedAt) VALUES($1,$2,$3,$4) RETURNING Id
 	`
-	_, err := r.db.Exec(query, project.Name, project.Description, project.Owner, project.CreatedAt)
-	return err
+
+	var id int
+	err := r.db.QueryRow(query, project.Name, project.Description, project.Owner, project.CreatedAt).Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+	return &id, nil
 }
 
 func (r *PostgresProjectRepo) Update(project *entity.Project, id int) error {

@@ -78,6 +78,9 @@ func (uc *TaskUseCase) Create(
 
 func (uc *TaskUseCase) Update(title, desciption, status *string, assigneeId *int, deadline *time.Time, taskId, userId int) error {
 	task, err := uc.GetTaskById(taskId, userId)
+	if task.OwnerId != userId {
+		return helper.ErrNoAccess
+	}
 	if err != nil {
 		return err
 	}
@@ -105,8 +108,12 @@ func (uc *TaskUseCase) Update(title, desciption, status *string, assigneeId *int
 	return uc.tr.Update(task, taskId)
 }
 
-func (uc *TaskUseCase) Delete(taskId, projectId, userId int) error {
-	if err := uc.pmr.CanUseProject(projectId, userId); err != nil {
+func (uc *TaskUseCase) Delete(taskId, userId int) error {
+	task, err := uc.GetTaskById(taskId, userId)
+	if err != nil {
+		return helper.ErrNotFound
+	}
+	if task.OwnerId != userId {
 		return helper.ErrNoAccess
 	}
 	return uc.tr.Delete(taskId)

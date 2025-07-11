@@ -14,18 +14,21 @@ type APIServier struct {
 	AuthHandler          *controller.AuthController
 	ProjectHandler       *controller.ProjectContoller
 	ProjectMemberHandler *controller.ProjectMemberController
+	TaskHandler          *controller.TaskController
 }
 
 func NewAPIServier(
 	address string,
-	authHandler controller.AuthController,
-	projectHandler controller.ProjectContoller,
-	projectMemberHandler controller.ProjectMemberController) *APIServier {
+	authHandler *controller.AuthController,
+	projectHandler *controller.ProjectContoller,
+	projectMemberHandler *controller.ProjectMemberController,
+	TaskHandler *controller.TaskController) *APIServier {
 	return &APIServier{
 		Address:              address,
-		AuthHandler:          &authHandler,
-		ProjectHandler:       &projectHandler,
-		ProjectMemberHandler: &projectMemberHandler,
+		AuthHandler:          authHandler,
+		ProjectHandler:       projectHandler,
+		ProjectMemberHandler: projectMemberHandler,
+		TaskHandler:          TaskHandler,
 	}
 }
 
@@ -50,6 +53,17 @@ func (s *APIServier) Run() {
 	pmRouter.HandleFunc("", s.ProjectMemberHandler.GetByProjectId).Methods("GET")
 	pmRouter.HandleFunc("", s.ProjectMemberHandler.AddMemberToProject).Methods("POST")
 	pmRouter.HandleFunc("/{userId}", s.ProjectMemberHandler.DeleteMemberToProject).Methods("DELETE")
+
+	tRouter := r.PathPrefix("/project/{projectId}/tasks").Subrouter()
+	tRouter.Use(middleware.JWTMiddleware)
+	tRouter.HandleFunc("", s.TaskHandler.GetBYProjectId).Methods("GET")
+	tRouter.HandleFunc("", s.TaskHandler.Create).Methods("POST")
+
+	taskRouter := r.PathPrefix("/tasks/{taskId}").Subrouter()
+	taskRouter.Use(middleware.JWTMiddleware)
+	taskRouter.HandleFunc("", s.TaskHandler.GetBYId).Methods("GET")
+	taskRouter.HandleFunc("", s.TaskHandler.Update).Methods("PUT")
+	taskRouter.HandleFunc("", s.TaskHandler.Delete).Methods("DELETE")
 
 	log.Println("listen and serve : ", s.Address)
 	if err := http.ListenAndServe(s.Address, r); err != nil {
