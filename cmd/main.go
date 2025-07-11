@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/go-playground/validator/v10"
 	database "github.com/patorochr/project-management-api/internal/infrastructure/repository"
 	"github.com/patorochr/project-management-api/internal/infrastructure/router"
 	controller "github.com/patorochr/project-management-api/internal/interface/contorller"
@@ -11,6 +12,8 @@ import (
 )
 
 func main() {
+
+	validator := validator.New()
 
 	connStr := "user=postgres dbname=postgres port=5431 password=thisworldshallknowpain720 sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
@@ -43,7 +46,7 @@ func main() {
 	projectHandler := controller.NewProjectContoller(projectUsecase)
 	authHandler := controller.NewAuthController(authUsecase)
 	projectMemberHandler := controller.NewProjectMemberController(projectMemberUsecase)
-	taskHandler := controller.NewTaskController(taskUsecase)
+	taskHandler := controller.NewTaskController(taskUsecase, validator)
 
 	router := router.NewAPIServier(":8888", authHandler, projectHandler, projectMemberHandler, taskHandler)
 

@@ -7,18 +7,21 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/patorochr/project-management-api/internal/interface/helper"
 	"github.com/patorochr/project-management-api/internal/usercase"
 )
 
 type TaskController struct {
-	uc *usercase.TaskUseCase
+	uc        *usercase.TaskUseCase
+	validator *validator.Validate
 }
 
-func NewTaskController(uc *usercase.TaskUseCase) *TaskController {
+func NewTaskController(uc *usercase.TaskUseCase, validator *validator.Validate) *TaskController {
 	return &TaskController{
-		uc: uc,
+		uc:        uc,
+		validator: validator,
 	}
 }
 
@@ -84,15 +87,19 @@ func (c *TaskController) GetBYId(w http.ResponseWriter, r *http.Request) {
 
 func (c *TaskController) Create(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Title       string    `json:"title"`
-		Description string    `json:"description"`
-		Status      string    `json:"status"`
+		Title       string    `json:"title" vaildate:"required"`
+		Description string    `json:"description" vaildate:"required"`
+		Status      string    `json:"status" vaildate:"oneof=todo in_progress done"`
 		AssigneeId  int       `json:"assignee_id"`
-		Deadline    time.Time `json:"deadline"`
+		Deadline    time.Time `json:"deadline" vaildate:"datetime"`
 	}
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		http.Error(w, "invalid input value", http.StatusBadRequest)
+		return
+	}
+	if err := c.validator.Struct(input); err != nil {
+		http.Error(w, "validation error", http.StatusBadRequest)
 		return
 	}
 	params := mux.Vars(r)
@@ -124,15 +131,19 @@ func (c *TaskController) Create(w http.ResponseWriter, r *http.Request) {
 
 func (c *TaskController) Update(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Title       string    `json:"title"`
-		Description string    `json:"description"`
-		Status      string    `json:"status"`
+		Title       string    `json:"title" vaildate:"required"`
+		Description string    `json:"description" vaildate:"required"`
+		Status      string    `json:"status" vaildate:"oneof=todo in_progress done"`
 		AssigneeId  int       `json:"assignee_id"`
-		Deadline    time.Time `json:"deadline"`
+		Deadline    time.Time `json:"deadline" vaildate:"datetime"`
 	}
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		http.Error(w, "invalid input value", http.StatusBadRequest)
+		return
+	}
+	if err := c.validator.Struct(input); err != nil {
+		http.Error(w, "validation error", http.StatusBadRequest)
 		return
 	}
 	params := mux.Vars(r)
