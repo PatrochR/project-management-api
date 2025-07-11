@@ -30,16 +30,22 @@ func main() {
 	if err := projectMemberPostgres.Init(); err != nil {
 		log.Fatal(err)
 	}
+	taskPostgres := database.NewPostgresTaskRepo(db)
+	if err := taskPostgres.Init(); err != nil {
+		log.Fatal(err)
+	}
 
-	projectUsecase := usercase.NewProjectUseCase(projectPostgres)
+	projectUsecase := usercase.NewProjectUseCase(projectPostgres, projectMemberPostgres)
 	authUsecase := usercase.NewAuthUseCase(authPostgres)
 	projectMemberUsecase := usercase.NewProjectMemberUseCase(projectMemberPostgres, projectPostgres)
+	taskUsecase := usercase.NewTaskUseCase(taskPostgres, projectMemberPostgres)
 
 	projectHandler := controller.NewProjectContoller(projectUsecase)
 	authHandler := controller.NewAuthController(authUsecase)
 	projectMemberHandler := controller.NewProjectMemberController(projectMemberUsecase)
+	taskHandler := controller.NewTaskController(taskUsecase)
 
-	router := router.NewAPIServier(":8888", *authHandler, *projectHandler, *projectMemberHandler)
+	router := router.NewAPIServier(":8888", authHandler, projectHandler, projectMemberHandler, taskHandler)
 
 	router.Run()
 }
