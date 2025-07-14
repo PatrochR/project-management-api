@@ -41,6 +41,7 @@ func (s *APIServier) Run() {
 	aRouter.HandleFunc("/login", s.AuthHandler.LoginHandler).Methods("POST")
 
 	pRouter := r.PathPrefix("/project").Subrouter()
+	pRouter.Use(middleware.LogMiddleware)
 	pRouter.Use(middleware.JWTMiddleware)
 	pRouter.HandleFunc("{id}", s.ProjectHandler.GetById).Methods("GET")
 	pRouter.HandleFunc("", s.ProjectHandler.GetByOwnerId).Methods("GET")
