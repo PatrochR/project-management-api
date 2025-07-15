@@ -8,7 +8,7 @@ import (
 	database "github.com/patorochr/project-management-api/internal/infrastructure/repository"
 	"github.com/patorochr/project-management-api/internal/infrastructure/router"
 	controller "github.com/patorochr/project-management-api/internal/interface/contorller"
-	"github.com/patorochr/project-management-api/internal/usercase"
+	"github.com/patorochr/project-management-api/internal/usecase"
 )
 
 func main() {
@@ -38,10 +38,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	projectUsecase := usercase.NewProjectUseCase(projectPostgres, projectMemberPostgres)
-	authUsecase := usercase.NewAuthUseCase(authPostgres)
-	projectMemberUsecase := usercase.NewProjectMemberUseCase(projectMemberPostgres, projectPostgres)
-	taskUsecase := usercase.NewTaskUseCase(taskPostgres, projectMemberPostgres)
+	projectUsecase := usecase.NewProjectUseCase(projectPostgres, projectMemberPostgres)
+	authUsecase := usecase.NewAuthUseCase(authPostgres)
+	projectMemberUsecase := usecase.NewProjectMemberUseCase(projectMemberPostgres, projectPostgres)
+	taskUsecase := usecase.NewTaskUseCase(taskPostgres, projectMemberPostgres)
 
 	projectHandler := controller.NewProjectContoller(projectUsecase, validator)
 	authHandler := controller.NewAuthController(authUsecase, validator)
