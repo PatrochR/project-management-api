@@ -10,15 +10,15 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/patorochr/project-management-api/internal/interface/helper"
-	"github.com/patorochr/project-management-api/internal/usercase"
+	"github.com/patorochr/project-management-api/internal/usecase"
 )
 
 type ProjectContoller struct {
-	usecase   *usercase.ProjectUseCase
+	usecase   *usecase.ProjectUseCase
 	validator *validator.Validate
 }
 
-func NewProjectContoller(usecase *usercase.ProjectUseCase, validator *validator.Validate) *ProjectContoller {
+func NewProjectContoller(usecase *usecase.ProjectUseCase, validator *validator.Validate) *ProjectContoller {
 	return &ProjectContoller{
 		usecase:   usecase,
 		validator: validator,

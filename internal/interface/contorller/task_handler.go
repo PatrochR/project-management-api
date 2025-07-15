@@ -10,15 +10,15 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/patorochr/project-management-api/internal/interface/helper"
-	"github.com/patorochr/project-management-api/internal/usercase"
+	"github.com/patorochr/project-management-api/internal/usecase"
 )
 
 type TaskController struct {
-	uc        *usercase.TaskUseCase
+	uc        *usecase.TaskUseCase
 	validator *validator.Validate
 }
 
-func NewTaskController(uc *usercase.TaskUseCase, validator *validator.Validate) *TaskController {
+func NewTaskController(uc *usecase.TaskUseCase, validator *validator.Validate) *TaskController {
 	return &TaskController{
 		uc:        uc,
 		validator: validator,

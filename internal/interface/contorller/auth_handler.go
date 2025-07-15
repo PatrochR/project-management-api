@@ -7,15 +7,15 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/patorochr/project-management-api/internal/interface/helper"
-	"github.com/patorochr/project-management-api/internal/usercase"
+	"github.com/patorochr/project-management-api/internal/usecase"
 )
 
 type AuthController struct {
-	usecase   *usercase.AuthUseCase
+	usecase   *usecase.AuthUseCase
 	validator *validator.Validate
 }
 
-func NewAuthController(usecase *usercase.AuthUseCase, validator *validator.Validate) *AuthController {
+func NewAuthController(usecase *usecase.AuthUseCase, validator *validator.Validate) *AuthController {
 	return &AuthController{
 		usecase:   usecase,
 		validator: validator,
