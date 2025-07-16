@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -22,6 +23,9 @@ func NewAuthUseCase(r repository.AuthRepository) *AuthUseCase {
 }
 
 func (uc *AuthUseCase) Register(email, password string) (*entity.User, error) {
+	if len(password) < 6 {
+		return nil, fmt.Errorf("password is not secure")
+	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
