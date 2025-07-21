@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/patorochr/project-management-api/internal/entity"
+	"github.com/patorochr/project-management-api/internal/interface/helper"
 	"github.com/patorochr/project-management-api/internal/interface/repository"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -42,11 +43,11 @@ func (uc *AuthUseCase) Register(email, password string) (*entity.User, error) {
 func (uc *AuthUseCase) Login(email, password string) (string, error) {
 	user, err := uc.repo.GetUserByEmail(email)
 	if err != nil {
-		return "", err
+		return "", helper.ErrWrongEmailOrPassowrd
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.HashPassword), []byte(password))
 	if err != nil {
-		return "", err
+		return "", helper.ErrWrongEmailOrPassowrd
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{

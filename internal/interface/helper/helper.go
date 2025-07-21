@@ -15,3 +15,4 @@ func WriteJSON(w http.ResponseWriter, code int, v any) error {
 var ErrNoAccess = errors.New("you dont have the access")
 var ErrNotFound = errors.New("not found")
 var ErrDb = errors.New("database error")
+var ErrWrongEmailOrPassowrd = errors.New("invalid email or password")

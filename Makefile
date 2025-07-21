@@ -3,3 +3,7 @@ build:
 
 run: build
 	@./bin/management-api
+
+
+testall:
+	@go test -v ./...
