@@ -7,6 +7,5 @@ type ProjectMemberRepostiroy interface {
 	Create(*entity.ProjectMember) error
 	ChangeRole(string, int) error
 	Delete(userId, projectId int) error
-	//FIXME: this only check if user is the member of the project but if user=owener this well not work
 	CanUseProject(projectId, userId int) error
 }

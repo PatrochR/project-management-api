@@ -5,8 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	controller "github.com/patorochr/project-management-api/internal/interface/contorller"
+	controller "github.com/patorochr/project-management-api/internal/interface/controller"
 	"github.com/patorochr/project-management-api/internal/interface/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type APIServier struct {
@@ -66,6 +67,7 @@ func (s *APIServier) Run() {
 	taskRouter.HandleFunc("", s.TaskHandler.Update).Methods("PUT")
 	taskRouter.HandleFunc("", s.TaskHandler.Delete).Methods("DELETE")
 
+	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 	log.Println("listen and serve : ", s.Address)
 	if err := http.ListenAndServe(s.Address, r); err != nil {
 		log.Fatal(err.Error())

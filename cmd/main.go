@@ -7,10 +7,17 @@ import (
 	"github.com/go-playground/validator/v10"
 	database "github.com/patorochr/project-management-api/internal/infrastructure/repository"
 	"github.com/patorochr/project-management-api/internal/infrastructure/router"
-	controller "github.com/patorochr/project-management-api/internal/interface/contorller"
+	controller "github.com/patorochr/project-management-api/internal/interface/controller"
 	"github.com/patorochr/project-management-api/internal/usecase"
+
+	_ "github.com/patorochr/project-management-api/docs"
 )
 
+// @title managment api
+// @version 1.0
+// @description simple api project
+// @host localhost:8888
+// @BasePath /
 func main() {
 
 	validator := validator.New()

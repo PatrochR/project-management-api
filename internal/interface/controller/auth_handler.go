@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/patorochr/project-management-api/internal/interface/controller/dto"
 	"github.com/patorochr/project-management-api/internal/interface/helper"
 	"github.com/patorochr/project-management-api/internal/usecase"
 )
@@ -22,11 +23,19 @@ func NewAuthController(usecase *usecase.AuthUseCase, validator *validator.Valida
 	}
 }
 
+// RegisterHandler godoc
+// @Summary User Register
+// @Description Register a user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param login body dto.RegisterRequest true "register credentials"
+// @Success 201 {string} string "Created - register successful"
+// @Failure 400 {string} string "Bad Request - validation error"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /auth/register [post]
 func (c *AuthController) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Email    string `json:"email" vaildate:"email , required"`
-		Password string `json:"password" vaildate:"min=6 , required"`
-	}
+	input := dto.RegisterRequest{}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -47,11 +56,19 @@ func (c *AuthController) RegisterHandler(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+// LoginHandler godoc
+// @Summary User login
+// @Description Authenticates a user and returns a JWT in a cookie and header
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param login body dto.LoginRequest true "Login credentials"
+// @Success 204 {string} string "No Content - login successful"
+// @Failure 400 {string} string "Bad Request - validation error"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /auth/login [post]
 func (c *AuthController) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Email    string `json:"email" vaildate:"email , required"`
-		Password string `json:"password" vaildate:"min=6 , required"`
-	}
+	input := dto.LoginRequest{}
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

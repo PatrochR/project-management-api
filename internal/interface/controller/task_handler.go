@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/patorochr/project-management-api/internal/interface/controller/dto"
 	"github.com/patorochr/project-management-api/internal/interface/helper"
 	"github.com/patorochr/project-management-api/internal/usecase"
 )
@@ -25,6 +25,17 @@ func NewTaskController(uc *usecase.TaskUseCase, validator *validator.Validate) *
 	}
 }
 
+// GetBYProjectId godoc
+// @Summary Get tasks by project ID
+// @Description Returns all tasks for a given project
+// @Tags tasks
+// @Produce json
+// @Param projectId path int true "Project ID"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /projects/{projectId}/tasks [get]
 func (c *TaskController) GetBYProjectId(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	projectIdStr, ok := params["projectId"]
@@ -54,6 +65,17 @@ func (c *TaskController) GetBYProjectId(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+// GetBYId godoc
+// @Summary Get task by ID
+// @Description Returns a single task by its ID
+// @Tags tasks
+// @Produce json
+// @Param taskId path int true "Task ID"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /tasks/{taskId} [get]
 func (c *TaskController) GetBYId(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	taskIdStr, ok := params["taskId"]
@@ -85,14 +107,21 @@ func (c *TaskController) GetBYId(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Create godoc
+// @Summary Create a new task
+// @Description Create a task under a specific project
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param projectId path int true "Project ID"
+// @Success 204 {string} string "No Content"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /projects/{projectId}/tasks [post]
 func (c *TaskController) Create(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Title       string    `json:"title" vaildate:"required"`
-		Description string    `json:"description" vaildate:"required"`
-		Status      string    `json:"status" vaildate:"oneof=todo in_progress done"`
-		AssigneeId  int       `json:"assignee_id"`
-		Deadline    time.Time `json:"deadline" vaildate:"datetime"`
-	}
+	input := dto.TaskRequest{}
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		http.Error(w, "invalid input value", http.StatusBadRequest)
@@ -129,14 +158,23 @@ func (c *TaskController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Update godoc
+// @Summary Update an existing task
+// @Description Update task details by task ID
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param taskId path int true "Task ID"
+// @Param task body dto.TaskRequest true "Task data"
+// @Success 204 {string} string "No Content"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /tasks/{taskId} [put]
 func (c *TaskController) Update(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Title       string    `json:"title" vaildate:"required"`
-		Description string    `json:"description" vaildate:"required"`
-		Status      string    `json:"status" vaildate:"oneof=todo in_progress done"`
-		AssigneeId  int       `json:"assignee_id"`
-		Deadline    time.Time `json:"deadline" vaildate:"datetime"`
-	}
+	input := dto.TaskRequest{}
+
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		http.Error(w, "invalid input value", http.StatusBadRequest)
@@ -175,6 +213,18 @@ func (c *TaskController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Delete godoc
+// @Summary Delete a task
+// @Description Delete a task by task ID
+// @Tags tasks
+// @Produce json
+// @Param taskId path int true "Task ID"
+// @Success 204 {string} string "No Content"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /tasks/{taskId} [delete]
 func (c *TaskController) Delete(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	taskIdStr, ok := params["taskId"]

@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/patorochr/project-management-api/internal/interface/controller/dto"
 	"github.com/patorochr/project-management-api/internal/interface/helper"
 	"github.com/patorochr/project-management-api/internal/usecase"
 )
@@ -25,6 +26,16 @@ func NewProjectContoller(usecase *usecase.ProjectUseCase, validator *validator.V
 	}
 }
 
+// GetByOwnerId godoc
+// @Summary Get all projects for the authenticated user
+// @Description Returns a list of projects owned by the current user
+// @Tags projects
+// @Produce json
+// @Success 200 {array} entity.Project
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /projects [get]
 func (c *ProjectContoller) GetByOwnerId(w http.ResponseWriter, r *http.Request) {
 	owenrId, ok := r.Context().Value("userID").(float64)
 	if !ok {
@@ -41,6 +52,18 @@ func (c *ProjectContoller) GetByOwnerId(w http.ResponseWriter, r *http.Request) 
 	helper.WriteJSON(w, http.StatusOK, projects)
 }
 
+// Create godoc
+// @Summary Create a new project
+// @Description Create a new project for the authenticated user
+// @Tags projects
+// @Accept json
+// @Produce json
+// @Success 201 {object} map[string]string "Project created"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /projects [post]
 func (c *ProjectContoller) Create(w http.ResponseWriter, r *http.Request) {
 	owenrId, ok := r.Context().Value("userID").(float64)
 	if !ok {
@@ -48,10 +71,9 @@ func (c *ProjectContoller) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	var input struct {
-		Name        string `json:"name" validate:"required"`
-		Description string `json:"description" validate:"required"`
-	}
+
+	input := dto.ProjectRequest{}
+
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, "invalid parameter", http.StatusBadRequest)
 		return
@@ -71,6 +93,19 @@ func (c *ProjectContoller) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetById godoc
+// @Summary Get a project by ID
+// @Description Retrieves a project by its ID if the user is the owner
+// @Tags projects
+// @Produce json
+// @Param id path int true "Project ID"
+// @Success 200 {object} entity.Project
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not Found"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /projects/{id} [get]
 func (c *ProjectContoller) GetById(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r)["id"]
 	id, err := strconv.Atoi(param)
@@ -104,6 +139,20 @@ func (c *ProjectContoller) GetById(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Update godoc
+// @Summary Update a project
+// @Description Update a project owned by the user
+// @Tags projects
+// @Accept json
+// @Produce json
+// @Param id path int true "Project ID"
+// @Success 204 {string} string "No Content"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not Found"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /projects/{id} [put]
 func (c *ProjectContoller) Update(w http.ResponseWriter, r *http.Request) {
 	owenrId, ok := r.Context().Value("userID").(float64)
 	if !ok {
@@ -118,10 +167,8 @@ func (c *ProjectContoller) Update(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	var input struct {
-		Name        string `json:"name" validate:"required"`
-		Description string `json:"description" validate:"required"`
-	}
+	input := dto.ProjectRequest{}
+
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, "invalid parameter", http.StatusBadRequest)
 		return
@@ -147,6 +194,19 @@ func (c *ProjectContoller) Update(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Delete godoc
+// @Summary Delete a project
+// @Description Delete a project owned by the user
+// @Tags projects
+// @Produce json
+// @Param id path int true "Project ID"
+// @Success 204 {string} string "No Content"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not Found"
+// @Failure 500 {string} string "Internal Server Error"
+// @Security BearerAuth
+// @Router /projects/{id} [delete]
 func (c *ProjectContoller) Delete(w http.ResponseWriter, r *http.Request) {
 	owenrId, ok := r.Context().Value("userID").(float64)
 	if !ok {
