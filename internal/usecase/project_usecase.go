@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"log"
 	"time"
 
 	"github.com/patorochr/project-management-api/internal/entity"
@@ -28,7 +27,6 @@ func (uc *ProjectUseCase) GetByOwnerId(ownerId int) (*[]entity.Project, error) {
 func (uc *ProjectUseCase) GetById(ownerId, id int) (*entity.Project, error) {
 	project, err := uc.repo.GetById(id)
 	if err != nil {
-		log.Println(err.Error())
 		return nil, helper.ErrNotFound
 	}
 	if project.Owner != ownerId {
@@ -79,7 +77,6 @@ func (uc *ProjectUseCase) Update(name, description string, ownerId, id int) erro
 func (uc *ProjectUseCase) Delete(ownerId, id int) error {
 	oldProject, err := uc.repo.GetById(id)
 	if err != nil {
-		log.Println(err.Error())
 		return helper.ErrNotFound
 	}
 	if oldProject.Owner != ownerId {
