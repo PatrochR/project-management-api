@@ -18,7 +18,6 @@ var getByOwnerIdCases = []struct {
 	{name: "happyPath", input: struct{ ownerId int }{ownerId: 1}, expect: nil, wantErr: false},
 }
 
-// FIXME: you should use mock mother father
 func TestGetOwnerId(t *testing.T) {
 	for _, c := range getByOwnerIdCases {
 		t.Run(c.name, func(t *testing.T) {

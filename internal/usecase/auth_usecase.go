@@ -37,7 +37,10 @@ func (uc *AuthUseCase) Register(email, password string) (*entity.User, error) {
 		IsAdmin:      false,
 		CreatedAt:    time.Now().UTC(),
 	}
-	return user, uc.repo.CreateUser(user)
+	if err := uc.repo.CreateUser(user); err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (uc *AuthUseCase) Login(email, password string) (string, error) {
