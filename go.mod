@@ -41,4 +41,4 @@ require (
 	golang.org/x/text v0.27.0 // indirect
 )
 
-replace golang.org/x/crypto => C:\Users\MOUOOD\Documents\depend\crypto
+//replace golang.org/x/crypto => C:\Users\MOUOOD\Documents\depend\crypto

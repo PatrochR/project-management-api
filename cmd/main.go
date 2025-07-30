@@ -22,7 +22,7 @@ func main() {
 
 	validator := validator.New()
 
-	connStr := "user=postgres dbname=postgres port=5431 password=thisworldshallknowpain720 sslmode=disable"
+	connStr := "user=postgres dbname=postgres port=5434 password=yourpassword sslmode=disable host=host.docker.internal"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
