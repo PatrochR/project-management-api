@@ -1,22 +1,17 @@
 package usecase
 
 import (
-	"errors"
 	"testing"
 	"time"
 
 	"github.com/patorochr/project-management-api/internal/entity"
-<<<<<<< HEAD
 	"github.com/patorochr/project-management-api/internal/interface/helper"
-=======
->>>>>>> f0183d44b78e7d868d2c741e9877471bf97bccda
 	"github.com/patorochr/project-management-api/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
 type getByOwnerIdInput struct {
 	ownerId int
-<<<<<<< HEAD
 }
 
 var getByOwnerIdCases = []struct {
@@ -43,34 +38,6 @@ var getByOwnerIdCases = []struct {
 }
 
 func TestGetByOwnerId(t *testing.T) {
-=======
-}
-
-var getByOwnerIdCases = []struct {
-	name        string
-	input       getByOwnerIdInput
-	mockSetup   func(projectMock *mocks.ProjectRepository, projectMemberMock *mocks.ProjectMemberRepostiroy)
-	expectErr   error
-	expectCalls bool
-}{
-	{name: "success", input: getByOwnerIdInput{ownerId: 1}, expectErr: nil, expectCalls: true, mockSetup: func(projectMock *mocks.ProjectRepository, projectMemberMock *mocks.ProjectMemberRepostiroy) {
-		projectMock.On("GetByOwnerId", 1).Return(&[]entity.Project{
-			{
-				Id:          1,
-				Name:        "project",
-				Description: "project's description",
-				Owner:       1,
-				CreatedAt:   time.Now().UTC(),
-			},
-		}, nil)
-	}},
-	{name: "db error", input: getByOwnerIdInput{ownerId: 1}, expectErr: errors.New("db error"), expectCalls: true, mockSetup: func(projectMock *mocks.ProjectRepository, projectMemberMock *mocks.ProjectMemberRepostiroy) {
-		projectMock.On("GetByOwnerId", 1).Return(nil, errors.New("db error"))
-	}},
-}
-
-func TestGetOwnerId(t *testing.T) {
->>>>>>> f0183d44b78e7d868d2c741e9877471bf97bccda
 	for _, tc := range getByOwnerIdCases {
 		t.Run(tc.name, func(t *testing.T) {
 			assert := assert.New(t)
@@ -81,10 +48,7 @@ func TestGetOwnerId(t *testing.T) {
 			projects, err := uc.GetByOwnerId(tc.input.ownerId)
 			if tc.expectErr != nil {
 				assert.Error(err)
-<<<<<<< HEAD
 				assert.ErrorIs(err, tc.expectErr)
-=======
->>>>>>> f0183d44b78e7d868d2c741e9877471bf97bccda
 				assert.Nil(projects)
 			} else {
 				assert.NoError(err)
@@ -97,7 +61,6 @@ func TestGetOwnerId(t *testing.T) {
 				projectMock.AssertNotCalled(t, "GetByOwnerId")
 			}
 
-<<<<<<< HEAD
 		})
 	}
 
@@ -326,8 +289,6 @@ func TestDelete(t *testing.T) {
 				projectMock.AssertNotCalled(t, "Delete")
 			}
 
-=======
->>>>>>> f0183d44b78e7d868d2c741e9877471bf97bccda
 		})
 	}
 
